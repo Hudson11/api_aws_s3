@@ -1,8 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const app = express()
-const handlebars = require('express-handlebars')
 // routers
 const s3Router = require('./routers/s3Router');
 
