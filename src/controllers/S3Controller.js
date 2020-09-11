@@ -55,11 +55,11 @@ class S3Controller {
 
   uploadArqBucket(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
+    const { bucket } = req.params
     if (!req.file)
       return res.json({ error: "Required File" })
     if (!bucket)
       return res.json({ error: 'error', message: 'bucket: required field' })
-    const { bucket } = req.params
     bucketPromise.upload({
       Bucket: bucket,
       Key: `${uuid.v4()}-${file.originalname}`,
