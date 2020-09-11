@@ -53,7 +53,7 @@ class S3Controller {
     })
   }
 
-  uploadArqBucket(file, req, res) {
+  uploadArqBucket(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
     if (!req.file)
       return res.json({ error: "Required File" })
