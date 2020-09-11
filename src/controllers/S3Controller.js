@@ -62,8 +62,8 @@ class S3Controller {
       return res.json({ error: 'error', message: 'bucket: required field' })
     bucketPromise.upload({
       Bucket: bucket,
-      Key: `${uuid.v4()}-${file.originalname}`,
-      Body: file.buffer,
+      Key: `${uuid.v4()}-${req.file.originalname}`,
+      Body: req.file.buffer,
     }, (err, data) => {
       if (err)
         return res.status(500).json({ error: 'error' })
