@@ -1,5 +1,4 @@
 const AWS = require('../config/AwsInstance')
-const fs = require('fs')
 const uuid = require('uuid')
 
 class S3Controller {
@@ -42,47 +41,68 @@ class S3Controller {
     })
   }
 
-  listBUcketObjects(req, res){
+  listBUcketObjects(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
     const { bucket } = req.params
     bucketPromise.listObjects({
       Bucket: bucket
     }, (err, data) => {
-      if(err)
+      if (err)
         return res.status(400).json(err)
       return res.json(data)
     })
   }
 
-  uploadArqBucket(file, req, res){
+  uploadArqBucket(file, req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
+    if (!req.file)
+      return res.json({ error: "Required File" })
+    if (!bucket)
+      return res.json({ error: 'error', message: 'bucket: required field' })
     const { bucket } = req.params
     bucketPromise.upload({
       Bucket: bucket,
       Key: `${uuid.v4()}-${file.originalname}`,
       Body: file.buffer,
     }, (err, data) => {
-      if(err)
-        return res.status(500).json({error: 'error'})
+      if (err)
+        return res.status(500).json({ error: 'error' })
       return res.json(data)
-    })  
+    })
   }
 
-  removeBucketObject(req, res){
+  removeBucketObject(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
     const { bucket, key } = req.params
-    if(!bucket)
-      return res.json({error: 'error', message: 'bucket: required field'})
-    else if(!key)
-      return res.json({error: 'error', message: 'key: required field'})
+    if (!bucket)
+      return res.json({ error: 'error', message: 'bucket: required field' })
+    else if (!key)
+      return res.json({ error: 'error', message: 'key: required field' })
     bucketPromise.deleteObject({
       Bucket: bucket,
       Key: key,
     }, (err, data) => {
-      if(err)
-        return res.status(500).json({error: err})
+      if (err)
+        return res.status(500).json({ error: err })
       return res.json(data)
-    }) 
+    })
+  }
+
+  getBucketObject(req, res) {
+    var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
+    const { bucket, key } = req.params
+    if (!bucket)
+      return res.json({ error: 'error', message: 'bucket: required field' })
+    else if (!key)
+      return res.json({ error: 'error', message: 'key: required field' })
+    bucketPromise.getObject({
+      Bucket: bucket,
+      Key: key
+    }, (err, data) => {
+      if (err)
+        return res.status(500).json({ error: err })
+      return res.json(data)
+    })
   }
 
 }
