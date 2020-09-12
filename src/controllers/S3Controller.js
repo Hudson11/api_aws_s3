@@ -22,7 +22,6 @@ class S3Controller {
   deleteBucket(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
     const { bucket } = req.params
-    console.log(req.params)
     bucketPromise.deleteBucket({
       Bucket: bucket
     }).promise().then((data) => {
@@ -95,13 +94,13 @@ class S3Controller {
       return res.json({ error: 'error', message: 'bucket: required field' })
     else if (!key)
       return res.json({ error: 'error', message: 'key: required field' })
-    bucketPromise.getObject({
+    bucketPromise.getSignedUrl('getObject', {
       Bucket: bucket,
       Key: key
-    }, (err, data) => {
+    }, (err, url) => {
       if (err)
         return res.status(500).json({ error: err })
-      return res.json(data)
+      return res.json({url: url})
     })
   }
 
