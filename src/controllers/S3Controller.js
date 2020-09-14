@@ -22,14 +22,49 @@ class S3Controller {
   deleteBucket(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
     const { bucket } = req.params
-    bucketPromise.deleteBucket({
+    bucketPromise.listObjects({
       Bucket: bucket
-    }).promise().then((data) => {
-      return res.json(data)
-    }).catch((err) => {
-      return res.status(400).json({ erro: 'Error', stack: err.stack })
+    }, (err, data) => {
+      if (err){
+        return res.status(400).json(err)
+      }
+      else{
+        let list = []
+        if(data.Contents.length > 0){
+          data.Contents.map((value) => list.push({Key: value.Key}))
+          bucketPromise.deleteObjects({
+            Bucket: bucket,
+            Delete: {
+              Objects: list
+            },
+          }, (err, data) => {
+            if(err){
+              return res.status(400).json(err)
+            }
+            else{
+              bucketPromise.deleteBucket({
+                Bucket: bucket
+              }, (err, data) => {
+                if(err)
+                  return res.status(400).json(err)
+                return res.json(data)
+              })
+            }
+          })
+        }
+        else{
+          bucketPromise.deleteBucket({
+            Bucket: bucket
+          }, (err, data) => {
+            if(err)
+              return res.status(400).json(err)
+            return res.json(data)
+          })
+        }
+      }
     })
   }
+
 
   listBuckets(req, res) {
     var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
