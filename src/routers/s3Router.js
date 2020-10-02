@@ -10,5 +10,7 @@ router.get('/:bucket/objects', AuthController.tokenVerify, S3Controller.listBUck
 router.post('/:bucket/upload', AuthController.tokenVerify, multer().single('file'), S3Controller.uploadArqBucket)
 router.delete('/:bucket/:key', AuthController.tokenVerify, S3Controller.removeBucketObject)
 router.get('/:bucket/:key', AuthController.tokenVerify, S3Controller.getBucketObject)
+router.get('/:bucket/root/object', AuthController.tokenVerify, S3Controller.getBucketObjectQuery)
+router.delete('/:bucket/root/object', AuthController.tokenVerify, S3Controller.removeBucketObjectQuery)
 
 module.exports = router;

@@ -139,6 +139,43 @@ class S3Controller {
     })
   }
 
+  getBucketObjectQuery(req, res) {
+    var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
+    const { key } = req.query
+    const { bucket } = req.params
+    if (!bucket)
+      return res.json({ error: 'error', message: 'bucket: required field' })
+    else if (!key)
+      return res.json({ error: 'error', message: 'key: required field' })
+    bucketPromise.getSignedUrl( 'getObject', {
+      Bucket: bucket,
+      Key: key
+    }, (err, data) => {
+      if(err) {
+        return res.status(400).json(err)
+      }
+      return res.status(200).json({ url: data })
+    })
+  }
+
+  removeBucketObjectQuery(req, res) {
+    var bucketPromise = new AWS.S3({ apiVersion: '2006-03-01' })
+    const { key } = req.query
+    const { bucket } = req.params
+    if (!bucket)
+      return res.json({ error: 'error', message: 'bucket: required field' })
+    else if (!key)
+      return res.json({ error: 'error', message: 'key: required field' })
+    bucketPromise.deleteObject({
+      Bucket: bucket,
+      Key: key,
+    }, (err, data) => {
+      if (err)
+        return res.status(500).json({ error: err })
+      return res.json(data)
+    })
+  }
+
 }
 
 module.exports = new S3Controller()
