@@ -12,5 +12,6 @@ router.delete('/:bucket/:key', AuthController.tokenVerify, S3Controller.removeBu
 router.get('/:bucket/:key', AuthController.tokenVerify, S3Controller.getBucketObject)
 router.get('/:bucket/root/object', AuthController.tokenVerify, S3Controller.getBucketObjectQuery)
 router.delete('/:bucket/root/object', AuthController.tokenVerify, S3Controller.removeBucketObjectQuery)
+router.post('/rekognition', AuthController.tokenVerify, multer().single('file'), S3Controller.rekognitionUpload)
 
 module.exports = router;
