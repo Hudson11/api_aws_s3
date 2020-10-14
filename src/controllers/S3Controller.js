@@ -240,7 +240,12 @@ class S3Controller {
             ContentType: `image/${format}`
           }).promise()
 
-          keys.push({ key: newKey })
+          const url = s3.getSignedUrl('getObject', {
+            Bucket: bucket,
+            Key: newKey,
+          })
+
+          keys.push({ key: newKey, url: url})
         }))
       } else {
         await s3.deleteObject({
@@ -250,7 +255,7 @@ class S3Controller {
       }
       return res.status(200).json(keys)
     } catch (err) {
-      return res.status(400).json(err.message)
+      return res.status(400).json(err)
     }
   }
 
